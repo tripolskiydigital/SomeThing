@@ -1,0 +1,22 @@
+
+> next-app@0.1.0 start
+> next start
+
+▲ Next.js 16.1.6
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+✓ Ready in 689ms
+Error creating user: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.user.create()` invocation:
+
+
+The table `main.User` does not exist in the current database.
+    at async w (.next/server/chunks/[root-of-the-server]__e892292e._.js:1:1516)
+    at async d (.next/server/chunks/[root-of-the-server]__e892292e._.js:1:4686)
+    at async l (.next/server/chunks/[root-of-the-server]__e892292e._.js:1:5727) {
+  code: 'P2021',
+  clientVersion: '5.11.0',
+  meta: [Object]
+}

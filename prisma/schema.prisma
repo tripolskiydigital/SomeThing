@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id              String    @id @default(uuid())
+  coupleId        String?
+  couple          Couple?   @relation(fields: [coupleId], references: [id])
+  preferences     String    @default("[]") // JSON stringified array of strings
+  wantToTry       String    @default("[]") // JSON stringified array of strings
+  statusExpiresAt DateTime?
+}
+
+model Couple {
+  id    String @id @default(uuid())
+  users User[]
+}
