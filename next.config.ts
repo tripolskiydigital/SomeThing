@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['@prisma/client', 'bcrypt'],
+  serverExternalPackages: ['@prisma/client', 'prisma', 'bcrypt', 'better-sqlite3'],
   images: {
     remotePatterns: [
       {
