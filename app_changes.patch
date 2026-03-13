@@ -1,0 +1,1291 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..f390d12
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,43 @@
++# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
++
++# dependencies
++/node_modules
++/.pnp
++.pnp.*
++.yarn/*
++!.yarn/patches
++!.yarn/plugins
++!.yarn/releases
++!.yarn/versions
++
++# testing
++/coverage
++
++# next.js
++/.next/
++/out/
++
++# production
++/build
++
++# misc
++.DS_Store
++*.pem
++
++# debug
++npm-debug.log*
++yarn-debug.log*
++yarn-error.log*
++.pnpm-debug.log*
++
++# env files (can opt-in for committing if needed)
++.env*
++
++# vercel
++.vercel
++
++# typescript
++*.tsbuildinfo
++next-env.d.ts
++
++/src/generated/prisma
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..e215bc4
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,36 @@
++This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
++
++## Getting Started
++
++First, run the development server:
++
++```bash
++npm run dev
++# or
++yarn dev
++# or
++pnpm dev
++# or
++bun dev
++```
++
++Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
++
++You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
++
++This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
++
++## Learn More
++
++To learn more about Next.js, take a look at the following resources:
++
++- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
++- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
++
++You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
++
++## Deploy on Vercel
++
++The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
++
++Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+diff --git a/eslint.config.mjs b/eslint.config.mjs
+new file mode 100644
+index 0000000..05e726d
+--- /dev/null
++++ b/eslint.config.mjs
+@@ -0,0 +1,18 @@
++import { defineConfig, globalIgnores } from "eslint/config";
++import nextVitals from "eslint-config-next/core-web-vitals";
++import nextTs from "eslint-config-next/typescript";
++
++const eslintConfig = defineConfig([
++  ...nextVitals,
++  ...nextTs,
++  // Override default ignores of eslint-config-next.
++  globalIgnores([
++    // Default ignores of eslint-config-next:
++    ".next/**",
++    "out/**",
++    "build/**",
++    "next-env.d.ts",
++  ]),
++]);
++
++export default eslintConfig;
+diff --git a/next.config.ts b/next.config.ts
+new file mode 100644
+index 0000000..d44d732
+--- /dev/null
++++ b/next.config.ts
+@@ -0,0 +1,18 @@
++/** @type {import('next').NextConfig} */
++const nextConfig = {
++  serverExternalPackages: ['@prisma/client', 'bcrypt'],
++  images: {
++    remotePatterns: [
++      {
++        protocol: 'https',
++        hostname: '**',
++      },
++      {
++        protocol: 'http',
++        hostname: '**',
++      },
++    ],
++  },
++};
++
++export default nextConfig;
+diff --git a/package.json b/package.json
+new file mode 100644
+index 0000000..375b037
+--- /dev/null
++++ b/package.json
+@@ -0,0 +1,33 @@
++{
++  "name": "next-app",
++  "version": "0.1.0",
++  "private": true,
++  "scripts": {
++    "dev": "next dev",
++    "build": "next build",
++    "start": "next start",
++    "lint": "eslint"
++  },
++  "dependencies": {
++    "@prisma/client": "^5.11.0",
++    "date-fns": "^4.1.0",
++    "lucide-react": "^0.577.0",
++    "next": "16.1.6",
++    "prisma": "^5.11.0",
++    "qrcode": "^1.5.4",
++    "react": "19.2.3",
++    "react-dom": "19.2.3",
++    "react-qr-code": "^2.0.18"
++  },
++  "devDependencies": {
++    "@tailwindcss/postcss": "^4",
++    "@types/node": "^20",
++    "@types/qrcode": "^1.5.6",
++    "@types/react": "^19",
++    "@types/react-dom": "^19",
++    "eslint": "^9",
++    "eslint-config-next": "16.1.6",
++    "tailwindcss": "^4",
++    "typescript": "^5"
++  }
++}
+diff --git a/postcss.config.mjs b/postcss.config.mjs
+new file mode 100644
+index 0000000..61e3684
+--- /dev/null
++++ b/postcss.config.mjs
+@@ -0,0 +1,7 @@
++const config = {
++  plugins: {
++    "@tailwindcss/postcss": {},
++  },
++};
++
++export default config;
+diff --git a/prisma.config.ts b/prisma.config.ts
+new file mode 100644
+index 0000000..0fca779
+--- /dev/null
++++ b/prisma.config.ts
+@@ -0,0 +1,6 @@
++export default {
++  schema: 'prisma/schema.prisma',
++  datasource: {
++    url: 'file:./dev.db',
++  },
++}
+diff --git a/prisma/schema.prisma b/prisma/schema.prisma
+new file mode 100644
+index 0000000..2b4b5c8
+--- /dev/null
++++ b/prisma/schema.prisma
+@@ -0,0 +1,25 @@
++// This is your Prisma schema file,
++// learn more about it in the docs: https://pris.ly/d/prisma-schema
++
++generator client {
++  provider = "prisma-client-js"
++}
++
++datasource db {
++  provider = "sqlite"
++  url      = "file:./dev.db"
++}
++
++model User {
++  id              String    @id @default(uuid())
++  coupleId        String?
++  couple          Couple?   @relation(fields: [coupleId], references: [id])
++  preferences     String    @default("[]") // JSON stringified array of strings
++  wantToTry       String    @default("[]") // JSON stringified array of strings
++  statusExpiresAt DateTime?
++}
++
++model Couple {
++  id    String @id @default(uuid())
++  users User[]
++}
+diff --git a/public/file.svg b/public/file.svg
+new file mode 100644
+index 0000000..004145c
+--- /dev/null
++++ b/public/file.svg
+@@ -0,0 +1 @@
++<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+\ No newline at end of file
+diff --git a/public/globe.svg b/public/globe.svg
+new file mode 100644
+index 0000000..567f17b
+--- /dev/null
++++ b/public/globe.svg
+@@ -0,0 +1 @@
++<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+\ No newline at end of file
+diff --git a/public/next.svg b/public/next.svg
+new file mode 100644
+index 0000000..5174b28
+--- /dev/null
++++ b/public/next.svg
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+\ No newline at end of file
+diff --git a/public/vercel.svg b/public/vercel.svg
+new file mode 100644
+index 0000000..7705396
+--- /dev/null
++++ b/public/vercel.svg
+@@ -0,0 +1 @@
++<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+\ No newline at end of file
+diff --git a/public/window.svg b/public/window.svg
+new file mode 100644
+index 0000000..b2b2a44
+--- /dev/null
++++ b/public/window.svg
+@@ -0,0 +1 @@
++<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+\ No newline at end of file
+diff --git a/server.log b/server.log
+new file mode 100644
+index 0000000..822ccb9
+Binary files /dev/null and b/server.log differ
+diff --git a/src/app/api/couple/invite/route.ts b/src/app/api/couple/invite/route.ts
+new file mode 100644
+index 0000000..c16f5ed
+--- /dev/null
++++ b/src/app/api/couple/invite/route.ts
+@@ -0,0 +1,37 @@
++import { NextResponse } from 'next/server';
++import { prisma } from '@/lib/prisma';
++
++export async function POST(request: Request) {
++  try {
++    const { userId } = await request.json();
++
++    if (!userId) {
++      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
++    }
++
++    const user = await prisma.user.findUnique({
++      where: { id: userId }
++    });
++
++    if (!user) {
++      return NextResponse.json({ error: 'User not found' }, { status: 404 });
++    }
++
++    if (user.coupleId) {
++      return NextResponse.json({ coupleId: user.coupleId });
++    }
++
++    const couple = await prisma.couple.create({
++      data: {
++        users: {
++          connect: { id: userId }
++        }
++      }
++    });
++
++    return NextResponse.json({ coupleId: couple.id });
++  } catch (error) {
++    console.error('Error creating invite:', error);
++    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
++  }
++}
+diff --git a/src/app/api/couple/join/route.ts b/src/app/api/couple/join/route.ts
+new file mode 100644
+index 0000000..b776f2d
+--- /dev/null
++++ b/src/app/api/couple/join/route.ts
+@@ -0,0 +1,47 @@
++import { NextResponse } from 'next/server';
++import { prisma } from '@/lib/prisma';
++
++export async function POST(request: Request) {
++  try {
++    const { userId, coupleId } = await request.json();
++
++    if (!userId || !coupleId) {
++      return NextResponse.json({ error: 'User ID and Couple ID are required' }, { status: 400 });
++    }
++
++    const user = await prisma.user.findUnique({
++      where: { id: userId }
++    });
++
++    if (!user) {
++      return NextResponse.json({ error: 'User not found' }, { status: 404 });
++    }
++    
++    const couple = await prisma.couple.findUnique({
++      where: { id: coupleId },
++      include: { users: true }
++    });
++
++    if (!couple) {
++      return NextResponse.json({ error: 'Couple not found' }, { status: 404 });
++    }
++
++    if (couple.users.length >= 2) {
++      // Check if the current user is already part of the couple
++      const isMember = couple.users.some(u => u.id === userId);
++      if (!isMember) {
++        return NextResponse.json({ error: 'Couple is already full' }, { status: 400 });
++      }
++    }
++
++    await prisma.user.update({
++      where: { id: userId },
++      data: { coupleId }
++    });
++
++    return NextResponse.json({ success: true, coupleId });
++  } catch (error) {
++    console.error('Error joining couple:', error);
++    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
++  }
++}
+diff --git a/src/app/api/couple/state/route.ts b/src/app/api/couple/state/route.ts
+new file mode 100644
+index 0000000..e68ff52
+--- /dev/null
++++ b/src/app/api/couple/state/route.ts
+@@ -0,0 +1,72 @@
++import { NextResponse } from 'next/server';
++import { prisma } from '@/lib/prisma';
++
++export async function POST(request: Request) {
++  try {
++    const { userId, coupleId } = await request.json();
++
++    if (!userId || !coupleId) {
++      return NextResponse.json({ error: 'User ID and Couple ID are required' }, { status: 400 });
++    }
++
++    const couple = await prisma.couple.findUnique({
++      where: { id: coupleId },
++      include: { users: true }
++    });
++
++    if (!couple) {
++      return NextResponse.json({ error: 'Couple not found' }, { status: 404 });
++    }
++
++    const currentUser = couple.users.find(u => u.id === userId);
++    const partner = couple.users.find(u => u.id !== userId);
++
++    if (!currentUser) {
++      return NextResponse.json({ error: 'User is not part of this couple' }, { status: 403 });
++    }
++
++    const state: any = {
++      isPartnerConnected: !!partner,
++      isMatchReady: false,
++      sharedPreferences: [],
++      sharedWantToTry: [],
++      oneWantsToTryOtherPrefers: [],
++      myStatusExpiresAt: currentUser.statusExpiresAt,
++      myPreferences: JSON.parse(currentUser.preferences || '[]'),
++      myWantToTry: JSON.parse(currentUser.wantToTry || '[]'),
++    };
++
++    if (partner) {
++      // Check readiness
++      const now = new Date();
++      const meReady = currentUser.statusExpiresAt && new Date(currentUser.statusExpiresAt) > now;
++      const partnerReady = partner.statusExpiresAt && new Date(partner.statusExpiresAt) > now;
++      state.isMatchReady = meReady && partnerReady;
++
++      // Parse arrays safely
++      const myPrefs = JSON.parse(currentUser.preferences || '[]');
++      const myWants = JSON.parse(currentUser.wantToTry || '[]');
++      const partnerPrefs = JSON.parse(partner.preferences || '[]');
++      const partnerWants = JSON.parse(partner.wantToTry || '[]');
++
++      // 1. Shared preferences (both have in preferences)
++      state.sharedPreferences = myPrefs.filter((p: string) => partnerPrefs.includes(p));
++
++      // 2. Shared want to try (both have in wantToTry)
++      state.sharedWantToTry = myWants.filter((w: string) => partnerWants.includes(w));
++
++      // 3. One wants to try and other prefers (or vice-versa)
++      // If I want to try it, and partner prefers it OR partner wants to try it and I prefer it
++      const myWantPartnerPrefers = myWants.filter((w: string) => partnerPrefs.includes(w));
++      const partnerWantMyPrefers = partnerWants.filter((w: string) => myPrefs.includes(w));
++      
++      const mixed = Array.from(new Set([...myWantPartnerPrefers, ...partnerWantMyPrefers]));
++      state.oneWantsToTryOtherPrefers = mixed;
++    }
++
++    return NextResponse.json(state);
++  } catch (error) {
++    console.error('Error fetching couple state:', error);
++    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
++  }
++}
+diff --git a/src/app/api/user/init/route.ts b/src/app/api/user/init/route.ts
+new file mode 100644
+index 0000000..87c15aa
+--- /dev/null
++++ b/src/app/api/user/init/route.ts
+@@ -0,0 +1,15 @@
++import { NextResponse } from 'next/server';
++import { prisma } from '@/lib/prisma';
++
++export async function POST() {
++  try {
++    const user = await prisma.user.create({
++      data: {}
++    });
++    
++    return NextResponse.json({ id: user.id });
++  } catch (error) {
++    console.error('Error creating user:', error);
++    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
++  }
++}
+diff --git a/src/app/api/user/preferences/route.ts b/src/app/api/user/preferences/route.ts
+new file mode 100644
+index 0000000..319b8ee
+--- /dev/null
++++ b/src/app/api/user/preferences/route.ts
+@@ -0,0 +1,30 @@
++import { NextResponse } from 'next/server';
++import { prisma } from '@/lib/prisma';
++
++export async function POST(request: Request) {
++  try {
++    const { userId, preferences, wantToTry } = await request.json();
++
++    if (!userId) {
++      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
++    }
++
++    const dataToUpdate: any = {};
++    if (preferences !== undefined) {
++      dataToUpdate.preferences = JSON.stringify(preferences);
++    }
++    if (wantToTry !== undefined) {
++      dataToUpdate.wantToTry = JSON.stringify(wantToTry);
++    }
++
++    const updatedUser = await prisma.user.update({
++      where: { id: userId },
++      data: dataToUpdate
++    });
++
++    return NextResponse.json({ success: true });
++  } catch (error) {
++    console.error('Error updating preferences:', error);
++    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
++  }
++}
+diff --git a/src/app/api/user/status/route.ts b/src/app/api/user/status/route.ts
+new file mode 100644
+index 0000000..7c1ce8a
+--- /dev/null
++++ b/src/app/api/user/status/route.ts
+@@ -0,0 +1,32 @@
++import { NextResponse } from 'next/server';
++import { prisma } from '@/lib/prisma';
++import { addHours } from 'date-fns';
++
++export async function POST(request: Request) {
++  try {
++    const { userId, hoursReady } = await request.json(); // hoursReady should be 1, 3, 6, 12, 24 or 0 (to clear)
++
++    if (!userId) {
++      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
++    }
++
++    if (hoursReady === undefined) {
++      return NextResponse.json({ error: 'hoursReady is required' }, { status: 400 });
++    }
++
++    let statusExpiresAt = null;
++    if (hoursReady > 0) {
++      statusExpiresAt = addHours(new Date(), hoursReady);
++    }
++
++    await prisma.user.update({
++      where: { id: userId },
++      data: { statusExpiresAt }
++    });
++
++    return NextResponse.json({ success: true, statusExpiresAt });
++  } catch (error) {
++    console.error('Error updating status:', error);
++    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
++  }
++}
+diff --git a/src/app/favicon.ico b/src/app/favicon.ico
+new file mode 100644
+index 0000000..718d6fe
+Binary files /dev/null and b/src/app/favicon.ico differ
+diff --git a/src/app/globals.css b/src/app/globals.css
+new file mode 100644
+index 0000000..a2dc41e
+--- /dev/null
++++ b/src/app/globals.css
+@@ -0,0 +1,26 @@
++@import "tailwindcss";
++
++:root {
++  --background: #ffffff;
++  --foreground: #171717;
++}
++
++@theme inline {
++  --color-background: var(--background);
++  --color-foreground: var(--foreground);
++  --font-sans: var(--font-geist-sans);
++  --font-mono: var(--font-geist-mono);
++}
++
++@media (prefers-color-scheme: dark) {
++  :root {
++    --background: #0a0a0a;
++    --foreground: #ededed;
++  }
++}
++
++body {
++  background: var(--background);
++  color: var(--foreground);
++  font-family: Arial, Helvetica, sans-serif;
++}
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+new file mode 100644
+index 0000000..f7fa87e
+--- /dev/null
++++ b/src/app/layout.tsx
+@@ -0,0 +1,34 @@
++import type { Metadata } from "next";
++import { Geist, Geist_Mono } from "next/font/google";
++import "./globals.css";
++
++const geistSans = Geist({
++  variable: "--font-geist-sans",
++  subsets: ["latin"],
++});
++
++const geistMono = Geist_Mono({
++  variable: "--font-geist-mono",
++  subsets: ["latin"],
++});
++
++export const metadata: Metadata = {
++  title: "Create Next App",
++  description: "Generated by create next app",
++};
++
++export default function RootLayout({
++  children,
++}: Readonly<{
++  children: React.ReactNode;
++}>) {
++  return (
++    <html lang="en">
++      <body
++        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
++      >
++        {children}
++      </body>
++    </html>
++  );
++}
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+new file mode 100644
+index 0000000..b36a073
+--- /dev/null
++++ b/src/app/page.tsx
+@@ -0,0 +1,156 @@
++'use client';
++
++import { useState, useEffect } from 'react';
++import QRCode from 'react-qr-code';
++import Dashboard from '@/components/Dashboard';
++
++export default function Home() {
++  const [userId, setUserId] = useState<string | null>(null);
++  const [coupleId, setCoupleId] = useState<string | null>(null);
++  const [inviteCode, setInviteCode] = useState<string>('');
++  const [generatedInvite, setGeneratedInvite] = useState<string | null>(null);
++  const [loading, setLoading] = useState<boolean>(true);
++  const [error, setError] = useState<string | null>(null);
++
++  useEffect(() => {
++    const initUser = async () => {
++      try {
++        const storedUserId = localStorage.getItem('userId');
++        const storedCoupleId = localStorage.getItem('coupleId');
++
++        if (storedUserId) {
++          setUserId(storedUserId);
++          if (storedCoupleId) setCoupleId(storedCoupleId);
++          setLoading(false);
++          return;
++        }
++
++        const res = await fetch('/api/user/init', { method: 'POST' });
++        const data = await res.json();
++
++        if (data.id) {
++          localStorage.setItem('userId', data.id);
++          setUserId(data.id);
++        }
++      } catch (err) {
++        console.error('Failed to init user:', err);
++      } finally {
++        setLoading(false);
++      }
++    };
++
++    initUser();
++  }, []);
++
++  const handleGenerateInvite = async () => {
++    try {
++      const res = await fetch('/api/couple/invite', {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({ userId })
++      });
++      const data = await res.json();
++      if (data.coupleId) {
++        setGeneratedInvite(data.coupleId);
++        setCoupleId(data.coupleId);
++        localStorage.setItem('coupleId', data.coupleId);
++      }
++    } catch (err) {
++      console.error(err);
++    }
++  };
++
++  const handleJoinCouple = async () => {
++    try {
++      setError(null);
++      const res = await fetch('/api/couple/join', {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({ userId, coupleId: inviteCode })
++      });
++      const data = await res.json();
++
++      if (data.error) {
++        setError(data.error);
++        return;
++      }
++
++      if (data.success) {
++        setCoupleId(data.coupleId);
++        localStorage.setItem('coupleId', data.coupleId);
++      }
++    } catch (err) {
++      console.error(err);
++      setError('An error occurred');
++    }
++  };
++
++  if (loading) return <div className="flex h-screen items-center justify-center bg-zinc-950 text-white">Loading...</div>;
++
++  if (coupleId && userId) {
++    return <Dashboard userId={userId} coupleId={coupleId} />;
++  }
++
++  return (
++    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-950 p-4 text-white">
++      <div className="w-full max-w-md space-y-8 rounded-xl bg-zinc-900 p-8 shadow-2xl">
++        <h1 className="text-center text-3xl font-bold tracking-tight text-rose-500">Intimacy App</h1>
++        <p className="text-center text-sm text-zinc-400">Anonymous & Private</p>
++
++        <div className="space-y-4">
++          <div className="rounded-lg border border-zinc-800 p-6 text-center transition hover:border-zinc-700">
++            <h2 className="mb-4 text-xl font-semibold">Create a Couple</h2>
++            <button
++              onClick={handleGenerateInvite}
++              className="w-full rounded-md bg-rose-600 px-4 py-2 font-medium text-white transition hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
++            >
++              Generate Invite Code
++            </button>
++            
++            {generatedInvite && (
++              <div className="mt-6 flex flex-col items-center space-y-4">
++                <p className="text-sm text-zinc-400">Scan this QR to join or share the code:</p>
++                <div className="rounded-xl bg-white p-4">
++                  <QRCode value={generatedInvite} size={150} />
++                </div>
++                <div className="rounded bg-zinc-800 px-3 py-2 font-mono text-sm tracking-wider text-zinc-300">
++                  {generatedInvite}
++                </div>
++              </div>
++            )}
++          </div>
++
++          <div className="relative">
++            <div className="absolute inset-0 flex items-center">
++              <span className="w-full border-t border-zinc-800" />
++            </div>
++            <div className="relative flex justify-center text-xs uppercase">
++              <span className="bg-zinc-900 px-2 text-zinc-500">Or</span>
++            </div>
++          </div>
++
++          <div className="rounded-lg border border-zinc-800 p-6 transition hover:border-zinc-700">
++            <h2 className="mb-4 text-center text-xl font-semibold">Join a Couple</h2>
++            <div className="space-y-3">
++              <input
++                type="text"
++                value={inviteCode}
++                onChange={(e) => setInviteCode(e.target.value)}
++                placeholder="Enter invite code"
++                className="w-full rounded-md border border-zinc-700 bg-zinc-800 px-4 py-2 text-white placeholder-zinc-500 focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500"
++              />
++              {error && <p className="text-sm text-red-500">{error}</p>}
++              <button
++                onClick={handleJoinCouple}
++                disabled={!inviteCode}
++                className="w-full rounded-md bg-zinc-700 px-4 py-2 font-medium text-white transition hover:bg-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 focus:ring-offset-zinc-900 disabled:opacity-50"
++              >
++                Join
++              </button>
++            </div>
++          </div>
++        </div>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/components/Dashboard.tsx b/src/components/Dashboard.tsx
+new file mode 100644
+index 0000000..78ba92d
+--- /dev/null
++++ b/src/components/Dashboard.tsx
+@@ -0,0 +1,344 @@
++'use client';
++
++import { useState, useEffect } from 'react';
++import { differenceInMinutes, parseISO } from 'date-fns';
++import { Clock, Heart, Flame, Sparkles, Check, Settings2, Share2, Info } from 'lucide-react';
++import QRCode from 'react-qr-code';
++
++const PREFERENCES_LIST = [
++  'BDSM', 'Roleplay', 'Toys', 'Bondage', 'Lingerie', 
++  'Massage', 'Public', 'Edging', 'Sensory Deprivation'
++];
++
++export default function Dashboard({ userId, coupleId }: { userId: string; coupleId: string }) {
++  const [state, setState] = useState<any>(null);
++  const [loading, setLoading] = useState(true);
++  const [activeTab, setActiveTab] = useState<'status' | 'preferences'>('status');
++  
++  // Status inputs
++  const [selectedHours, setSelectedHours] = useState<number | null>(null);
++
++  // Preference inputs
++  const [myPreferences, setMyPreferences] = useState<string[]>([]);
++  const [myWantToTry, setMyWantToTry] = useState<string[]>([]);
++
++  // Polling
++  useEffect(() => {
++    const fetchState = async () => {
++      try {
++        const res = await fetch('/api/couple/state', {
++          method: 'POST',
++          headers: { 'Content-Type': 'application/json' },
++          body: JSON.stringify({ userId, coupleId })
++        });
++        const data = await res.json();
++        if (!data.error) {
++          setState(data);
++          setMyPreferences(data.myPreferences || []);
++          setMyWantToTry(data.myWantToTry || []);
++        }
++      } catch (err) {
++        console.error(err);
++      } finally {
++        setLoading(false);
++      }
++    };
++
++    fetchState();
++    const interval = setInterval(fetchState, 10000); // Poll every 10s
++    return () => clearInterval(interval);
++  }, [userId, coupleId]);
++
++  const updateStatus = async (hours: number) => {
++    setSelectedHours(hours);
++    try {
++      await fetch('/api/user/status', {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({ userId, hoursReady: hours })
++      });
++      // Force refresh state immediately after
++      const res = await fetch('/api/couple/state', {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({ userId, coupleId })
++      });
++      setState(await res.json());
++    } catch (err) {
++      console.error(err);
++    }
++  };
++
++  const updatePreferences = async (prefs: string[], wants: string[]) => {
++    setMyPreferences(prefs);
++    setMyWantToTry(wants);
++    try {
++      await fetch('/api/user/preferences', {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({ userId, preferences: prefs, wantToTry: wants })
++      });
++      // Refresh state
++      const res = await fetch('/api/couple/state', {
++        method: 'POST',
++        headers: { 'Content-Type': 'application/json' },
++        body: JSON.stringify({ userId, coupleId })
++      });
++      setState(await res.json());
++    } catch (err) {
++      console.error(err);
++    }
++  };
++
++  const togglePreference = (item: string) => {
++    const newPrefs = myPreferences.includes(item) 
++      ? myPreferences.filter(p => p !== item)
++      : [...myPreferences, item];
++    updatePreferences(newPrefs, myWantToTry);
++  };
++
++  const toggleWantToTry = (item: string) => {
++    const newWants = myWantToTry.includes(item)
++      ? myWantToTry.filter(w => w !== item)
++      : [...myWantToTry, item];
++    updatePreferences(myPreferences, newWants);
++  };
++
++  if (loading || !state) {
++    return (
++      <div className="flex min-h-screen items-center justify-center bg-zinc-950 text-white">
++        <div className="flex animate-pulse flex-col items-center">
++          <Heart className="h-12 w-12 text-rose-500" />
++          <p className="mt-4 text-zinc-400">Syncing connection...</p>
++        </div>
++      </div>
++    );
++  }
++
++  // Calculate remaining time for self status
++  let remainingMinutes = 0;
++  if (state.myStatusExpiresAt) {
++    const expiry = parseISO(state.myStatusExpiresAt);
++    const now = new Date();
++    if (expiry > now) {
++      remainingMinutes = differenceInMinutes(expiry, now);
++    }
++  }
++  const isCurrentlyReady = remainingMinutes > 0;
++
++  return (
++    <div className="min-h-screen bg-zinc-950 text-white selection:bg-rose-500/30">
++      {/* Header */}
++      <header className="sticky top-0 z-10 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md">
++        <div className="mx-auto flex max-w-2xl items-center justify-between p-4">
++          <div className="flex items-center space-x-2">
++            <Heart className="h-6 w-6 text-rose-500" fill="currentColor" />
++            <h1 className="text-xl font-bold tracking-tight">Bonded</h1>
++          </div>
++          <div className="flex items-center space-x-2 text-sm">
++            <div className={`h-2 w-2 rounded-full ${state.isPartnerConnected ? 'bg-emerald-500' : 'bg-rose-500 animate-pulse'}`} />
++            <span className={state.isPartnerConnected ? 'text-zinc-300' : 'text-zinc-500'}>
++              {state.isPartnerConnected ? 'Partner Connected' : 'Waiting for Partner'}
++            </span>
++          </div>
++        </div>
++
++        {/* Navigation Tabs */}
++        <div className="mx-auto flex max-w-2xl border-t border-zinc-800/50">
++          <button 
++            onClick={() => setActiveTab('status')}
++            className={`flex flex-1 items-center justify-center py-3 text-sm font-medium transition-colors ${activeTab === 'status' ? 'border-b-2 border-rose-500 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}
++          >
++            <Clock className="mr-2 h-4 w-4" /> Intimacy Status
++          </button>
++          <button 
++            onClick={() => setActiveTab('preferences')}
++            className={`flex flex-1 items-center justify-center py-3 text-sm font-medium transition-colors ${activeTab === 'preferences' ? 'border-b-2 border-rose-500 text-white' : 'text-zinc-400 hover:text-zinc-200'}`}
++          >
++            <Settings2 className="mr-2 h-4 w-4" /> Preferences & Matches
++          </button>
++        </div>
++      </header>
++
++      <main className="mx-auto max-w-2xl space-y-8 p-4 pt-8">
++        {!state.isPartnerConnected && (
++          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 text-center shadow-lg">
++            <Share2 className="mx-auto h-12 w-12 text-zinc-600 mb-4" />
++            <h2 className="text-xl font-semibold mb-2">Invite your partner</h2>
++            <p className="text-zinc-400 mb-6 text-sm">Have them scan this QR code or enter your Couple ID on their device.</p>
++            <div className="mx-auto w-fit rounded-xl bg-white p-4 shadow-sm mb-4">
++              <QRCode value={coupleId} size={150} />
++            </div>
++            <div className="inline-block rounded-lg bg-zinc-800 px-4 py-2 font-mono text-lg tracking-wider text-rose-400">
++              {coupleId}
++            </div>
++          </div>
++        )}
++
++        {state.isPartnerConnected && activeTab === 'status' && (
++          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
++            {/* Match Alert */}
++            {state.isMatchReady && (
++              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-rose-500 to-fuchsia-600 p-6 text-center shadow-2xl shadow-rose-500/20">
++                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
++                <Flame className="mx-auto mb-3 h-12 w-12 animate-pulse text-white drop-shadow-md" />
++                <h2 className="text-2xl font-bold tracking-tight text-white mb-1">It's a Match!</h2>
++                <p className="text-rose-100 font-medium">Both you and your partner are in the mood.</p>
++              </div>
++            )}
++
++            {/* Status Controls */}
++            <div className="rounded-2xl border border-zinc-800 bg-zinc-900/40 p-6 backdrop-blur-sm shadow-xl">
++              <div className="mb-6 text-center">
++                <h3 className="text-lg font-semibold text-white mb-2">Signal Your Desire</h3>
++                <p className="text-sm text-zinc-400">How long will you be in the mood?</p>
++              </div>
++
++              <div className="grid grid-cols-5 gap-2">
++                {[1, 3, 6, 12, 24].map((hours) => (
++                  <button
++                    key={hours}
++                    onClick={() => updateStatus(hours)}
++                    className={`flex flex-col items-center justify-center rounded-xl border p-3 transition-all duration-200 hover:scale-105 active:scale-95 ${
++                      isCurrentlyReady && selectedHours === hours
++                        ? 'border-rose-500 bg-rose-500/10 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.2)]'
++                        : 'border-zinc-800 bg-zinc-900 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
++                    }`}
++                  >
++                    <span className="text-xl font-bold">{hours}</span>
++                    <span className="text-xs font-medium uppercase tracking-wider opacity-70">hrs</span>
++                  </button>
++                ))}
++              </div>
++              
++              <div className="mt-6 flex items-center justify-between rounded-lg bg-zinc-950/50 p-4 border border-zinc-800/50">
++                <div className="flex items-center space-x-3">
++                  <div className="relative">
++                    <div className={`h-3 w-3 rounded-full ${isCurrentlyReady ? 'bg-emerald-500' : 'bg-zinc-600'}`}></div>
++                    {isCurrentlyReady && <div className="absolute inset-0 h-3 w-3 rounded-full bg-emerald-500 animate-ping opacity-75"></div>}
++                  </div>
++                  <span className="text-sm font-medium text-zinc-300">
++                    {isCurrentlyReady ? 'You are currently open' : 'You are currently closed'}
++                  </span>
++                </div>
++                {isCurrentlyReady && (
++                  <button 
++                    onClick={() => updateStatus(0)}
++                    className="text-xs text-zinc-500 hover:text-rose-400 transition-colors underline underline-offset-4"
++                  >
++                    Cancel Signal
++                  </button>
++                )}
++              </div>
++            </div>
++          </div>
++        )}
++
++        {state.isPartnerConnected && activeTab === 'preferences' && (
++          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
++            
++            {/* Matches Display */}
++            {(state.sharedPreferences.length > 0 || state.sharedWantToTry.length > 0 || state.oneWantsToTryOtherPrefers.length > 0) ? (
++              <div className="space-y-4">
++                <h3 className="flex items-center text-lg font-semibold text-rose-400">
++                  <Sparkles className="mr-2 h-5 w-5" /> Your Matches
++                </h3>
++                
++                {state.sharedPreferences.length > 0 && (
++                  <div className="rounded-xl border border-emerald-900/50 bg-emerald-950/20 p-5 shadow-sm">
++                    <h4 className="mb-3 text-sm font-medium text-emerald-400 flex items-center">
++                      <Check className="mr-1.5 h-4 w-4" /> Both Prefer
++                    </h4>
++                    <div className="flex flex-wrap gap-2">
++                      {state.sharedPreferences.map((p: string) => (
++                        <span key={p} className="rounded-full bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 text-sm text-emerald-300">
++                          {p}
++                        </span>
++                      ))}
++                    </div>
++                  </div>
++                )}
++
++                {state.sharedWantToTry.length > 0 && (
++                  <div className="rounded-xl border border-amber-900/50 bg-amber-950/20 p-5 shadow-sm">
++                    <h4 className="mb-3 text-sm font-medium text-amber-400 flex items-center">
++                      <Flame className="mr-1.5 h-4 w-4" /> Both Want to Try
++                    </h4>
++                    <div className="flex flex-wrap gap-2">
++                      {state.sharedWantToTry.map((w: string) => (
++                        <span key={w} className="rounded-full bg-amber-500/10 border border-amber-500/20 px-3 py-1 text-sm text-amber-300">
++                          {w}
++                        </span>
++                      ))}
++                    </div>
++                  </div>
++                )}
++
++                {state.oneWantsToTryOtherPrefers.length > 0 && (
++                  <div className="rounded-xl border border-fuchsia-900/50 bg-fuchsia-950/20 p-5 shadow-sm">
++                    <h4 className="mb-3 text-sm font-medium text-fuchsia-400 flex items-center">
++                      <Sparkles className="mr-1.5 h-4 w-4" /> Perfect Complements
++                    </h4>
++                    <p className="text-xs text-zinc-500 mb-3 ml-5">One of you prefers it, the other wants to try it.</p>
++                    <div className="flex flex-wrap gap-2">
++                      {state.oneWantsToTryOtherPrefers.map((w: string) => (
++                        <span key={w} className="rounded-full bg-fuchsia-500/10 border border-fuchsia-500/20 px-3 py-1 text-sm text-fuchsia-300">
++                          {w}
++                        </span>
++                      ))}
++                    </div>
++                  </div>
++                )}
++              </div>
++            ) : (
++              <div className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 text-center">
++                <Info className="mx-auto h-8 w-8 text-zinc-600 mb-3" />
++                <p className="text-sm text-zinc-400">Fill out your preferences below to see secret matches with your partner. Nothing is shared unless there is overlap!</p>
++              </div>
++            )}
++
++            <hr className="border-zinc-800" />
++
++            {/* Preference Selection */}
++            <div className="space-y-6">
++              <div>
++                <h3 className="mb-1 text-lg font-semibold">Your Profile</h3>
++                <p className="mb-6 text-sm text-zinc-500">Select what you like and what you're curious about. Your partner will only see these if they select them too.</p>
++              </div>
++
++              <div className="space-y-4">
++                {PREFERENCES_LIST.map((item) => (
++                  <div key={item} className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900/30 p-4 transition-colors hover:bg-zinc-900/50">
++                    <span className="font-medium text-zinc-200">{item}</span>
++                    <div className="flex items-center space-x-2">
++                      <button
++                        onClick={() => togglePreference(item)}
++                        className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
++                          myPreferences.includes(item)
++                            ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
++                            : 'border-zinc-700 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300'
++                        }`}
++                      >
++                        {myPreferences.includes(item) ? 'I Like This' : 'Like'}
++                      </button>
++                      <button
++                        onClick={() => toggleWantToTry(item)}
++                        className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all ${
++                          myWantToTry.includes(item)
++                            ? 'border-amber-500 bg-amber-500/10 text-amber-400'
++                            : 'border-zinc-700 text-zinc-500 hover:border-zinc-600 hover:text-zinc-300'
++                        }`}
++                      >
++                        {myWantToTry.includes(item) ? 'Curious' : 'Curious'}
++                      </button>
++                    </div>
++                  </div>
++                ))}
++              </div>
++            </div>
++          </div>
++        )}
++      </main>
++    </div>
++  );
++}
+diff --git a/src/lib/prisma.ts b/src/lib/prisma.ts
+new file mode 100644
+index 0000000..7dd607d
+--- /dev/null
++++ b/src/lib/prisma.ts
+@@ -0,0 +1,7 @@
++import { PrismaClient } from '@prisma/client'
++
++const globalForPrisma = global as unknown as { prisma: PrismaClient }
++
++export const prisma = globalForPrisma.prisma || new PrismaClient()
++
++if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+diff --git a/start.log b/start.log
+new file mode 100644
+index 0000000..427d53c
+--- /dev/null
++++ b/start.log
+@@ -0,0 +1,22 @@
++
++> next-app@0.1.0 start
++> next start
++
++▲ Next.js 16.1.6
++- Local:         http://localhost:3000
++- Network:       http://192.168.0.2:3000
++
++✓ Starting...
++✓ Ready in 689ms
++Error creating user: Error [PrismaClientKnownRequestError]: 
++Invalid `prisma.user.create()` invocation:
++
++
++The table `main.User` does not exist in the current database.
++    at async w (.next/server/chunks/[root-of-the-server]__e892292e._.js:1:1516)
++    at async d (.next/server/chunks/[root-of-the-server]__e892292e._.js:1:4686)
++    at async l (.next/server/chunks/[root-of-the-server]__e892292e._.js:1:5727) {
++  code: 'P2021',
++  clientVersion: '5.11.0',
++  meta: [Object]
++}
+diff --git a/test.js b/test.js
+new file mode 100644
+index 0000000..68b6b42
+--- /dev/null
++++ b/test.js
+@@ -0,0 +1,69 @@
++async function runTests() {
++  const BASE_URL = 'http://localhost:3000';
++
++  console.log('Testing User Init...');
++  const initRes1 = await fetch(`${BASE_URL}/api/user/init`, { method: 'POST' });
++  const user1 = await initRes1.json();
++  console.log('User 1:', user1.id);
++
++  const initRes2 = await fetch(`${BASE_URL}/api/user/init`, { method: 'POST' });
++  const user2 = await initRes2.json();
++  console.log('User 2:', user2.id);
++
++  console.log('\nTesting Couple Invite...');
++  const inviteRes = await fetch(`${BASE_URL}/api/couple/invite`, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify({ userId: user1.id })
++  });
++  const couple = await inviteRes.json();
++  console.log('Couple ID:', couple.coupleId);
++
++  console.log('\nTesting Couple Join...');
++  const joinRes = await fetch(`${BASE_URL}/api/couple/join`, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify({ userId: user2.id, coupleId: couple.coupleId })
++  });
++  const joinData = await joinRes.json();
++  console.log('Join result:', joinData);
++
++  console.log('\nTesting Preferences (User 1 likes A, User 2 wants to try A)...');
++  await fetch(`${BASE_URL}/api/user/preferences`, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify({ userId: user1.id, preferences: ['A'], wantToTry: [] })
++  });
++  await fetch(`${BASE_URL}/api/user/preferences`, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify({ userId: user2.id, preferences: [], wantToTry: ['A', 'B'] })
++  });
++
++  console.log('\nTesting Status Update (Both ready for 1 hour)...');
++  await fetch(`${BASE_URL}/api/user/status`, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify({ userId: user1.id, hoursReady: 1 })
++  });
++  await fetch(`${BASE_URL}/api/user/status`, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify({ userId: user2.id, hoursReady: 1 })
++  });
++
++  console.log('\nTesting Couple State...');
++  const stateRes = await fetch(`${BASE_URL}/api/couple/state`, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify({ userId: user1.id, coupleId: couple.coupleId })
++  });
++  const state = await stateRes.json();
++  console.log('Final State for User 1:');
++  console.log(JSON.stringify(state, null, 2));
++
++  console.log('\nTests Complete.');
++}
++
++// Wait for server to start, then test
++setTimeout(runTests, 3000);
+diff --git a/tsconfig.json b/tsconfig.json
+new file mode 100644
+index 0000000..cf9c65d
+--- /dev/null
++++ b/tsconfig.json
+@@ -0,0 +1,34 @@
++{
++  "compilerOptions": {
++    "target": "ES2017",
++    "lib": ["dom", "dom.iterable", "esnext"],
++    "allowJs": true,
++    "skipLibCheck": true,
++    "strict": true,
++    "noEmit": true,
++    "esModuleInterop": true,
++    "module": "esnext",
++    "moduleResolution": "bundler",
++    "resolveJsonModule": true,
++    "isolatedModules": true,
++    "jsx": "react-jsx",
++    "incremental": true,
++    "plugins": [
++      {
++        "name": "next"
++      }
++    ],
++    "paths": {
++      "@/*": ["./src/*"]
++    }
++  },
++  "include": [
++    "next-env.d.ts",
++    "**/*.ts",
++    "**/*.tsx",
++    ".next/types/**/*.ts",
++    ".next/dev/types/**/*.ts",
++    "**/*.mts"
++  ],
++  "exclude": ["node_modules"]
++}
